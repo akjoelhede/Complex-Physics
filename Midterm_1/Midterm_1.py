@@ -52,7 +52,7 @@ neigh_4N = ran_neigh(state_0)
 
 @njit
 def calc_energy(state):
-    nbor_magnetization = np.roll(state, 1) + np.roll(state, -1)
+    nbor_magnetization = np.roll(state, 1) + np.roll(state, -1) + np.roll(state, -2) + np.roll(state, 2)
     return -np.sum(state * nbor_magnetization) / 2
 
 @njit
@@ -103,7 +103,7 @@ shape = 200
 
 all_states_energy = run_multiple1(1/betas, shape, n_warmup=0, n_average=100)
 plt.plot(all_states_energy[:,:,1].T, alpha = 0.5)
-plt.savefig("1D_Ising_a_multipletemp.pdf")
+plt.savefig("1D_Ising_a_multipletemp_3.pdf")
 plt.close('all')
 
 all_states_avgenergy = run_multiple1(1/betas, shape, n_warmup=0, n_average=100)
@@ -111,7 +111,7 @@ plt.violinplot(all_states_avgenergy[:,:,1].T, betas, widths=0.02, showextrema=Fa
 plt.title("Average Energy vs Temperature")
 plt.ylabel(r"Average energy per spin ")
 plt.xlabel(r"Temperature ($k_b T/J$)")
-plt.savefig('Avg_Energy_a.pdf')
+plt.savefig('Avg_Energy_a_3.pdf')
 plt.close('all')
 
 all_states_avgmag = run_multiple1(1/betas, shape, n_warmup=10, n_average=100)
@@ -119,19 +119,19 @@ plt.violinplot(all_states_avgmag[:,:,0].T, betas, widths=0.02, showextrema=False
 plt.title("Average Magnetisation vs Temperature")
 plt.ylabel(r"Average Magnetisation per spin ")
 plt.xlabel(r"Temperature ($k_b T/J$)")
-plt.savefig('Avg_Magnetisation_a.pdf')
+plt.savefig('Avg_Magnetisation_a_3.pdf')
 plt.close('all')
 
 sys_N = [1,50,200,1000]
 
 fig, ax  = plt.subplots(nrows = len(sys_N), sharex=True)
 for n in tqdm(range(len(sys_N))):
-	state_mag = run_multiple1(1/betas, sys_N[n], n_warmup=10, n_average=500)
+	state_mag = run_multiple1(1/betas, sys_N[n], n_warmup=10, n_average=100)
 	ax[n].violinplot(np.abs(state_mag[:,:,1].T), betas, widths=0.02, showextrema=False, showmeans=True)
 	ax[n].set_title(f'For N = {sys_N[n]}')
 	if n == (len(sys_N)-1):
 		ax[n].set_xlabel('T')
 		ax[n].set_ylabel('Absolute Average Magnetisation|m|')
 fig.tight_layout()
-fig.savefig("diff_N_a.pdf")
+fig.savefig("diff_N_a_3.pdf")
 plt.close('all')
