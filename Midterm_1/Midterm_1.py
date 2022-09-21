@@ -1,9 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from  tqdm import tqdm
+from numba import njit
+
 
 
 "First implementation of 1D spin chain where each spin site has 2 neighbors, on to the left and one to the right and"
 
+@njit
 def ran_neigh(M):
 	Random_neighbours = []
 	for i in range(len(M)):
@@ -46,11 +50,13 @@ state_0 = init(default_settings[1])
 
 neigh_4N = ran_neigh(state_0)
 
+@njit
 def calc_energy(state):
     nbor_magnetization = np.roll(state, 1) + np.roll(state, -1)
     return -np.sum(state * nbor_magnetization) / 2
 
-def calc_energy_4N(state):
+@njit
+def calc_energy4N(state):
 	Nearest_con = np.roll(state, 1) + np.roll(state, -1)
 	M_con = np.zeros_like(state)
 	for i in range(len(state)):
@@ -59,18 +65,20 @@ def calc_energy_4N(state):
 	E = -0.5*np.sum(Nearest_con*M_con*state)
 	return E
 
+@njit
 def update(state, beta):
     for _ in range(state.size):
         rand_x = np.random.randint(state.shape[0]) 
         new_state = state.copy()
         new_state[rand_x] *= -1
-        dE = calc_energy_4N(new_state) - calc_energy_4N(state)
+        dE = calc_energy(new_state) - calc_energy(state)
         
         if np.exp(-dE*beta) > np.random.rand():
             state[:] = new_state # only with the probability we keep the new state
 
+@njit
 def calc_stat(state):
-    return np.abs(state.mean()), calc_energy_4N(state)
+    return np.abs(state.mean()), calc_energy(state)
 
 def run_simulation(shape, beta, n_warmup, n_average):
     state = init(shape)
@@ -81,9 +89,10 @@ def run_simulation(shape, beta, n_warmup, n_average):
             stats.append(calc_stat(state))
     return stats
 
+
 def run_multiple1(betas, shape, n_warmup, n_average):
     all_states = []
-    for beta in betas:
+    for beta in tqdm(betas):
         all_states.append(run_simulation(shape, beta, n_warmup, n_average))
     return np.array(all_states)
 
@@ -92,20 +101,37 @@ betas = np.linspace(0.1,4, 40)
 shape = 200
 
 
-#all_states_energy = run_multiple1(1/betas, shape, n_warmup=0, n_average=100)
-#plt.plot(all_states_energy[:,:,1].T, alpha = 0.5)
-#plt.savefig("1D_Ising_a_multipletemp.pdf")
+all_states_energy = run_multiple1(1/betas, shape, n_warmup=0, n_average=100)
+plt.plot(all_states_energy[:,:,1].T, alpha = 0.5)
+plt.savefig("1D_Ising_a_multipletemp.pdf")
+plt.close('all')
 
-#all_states_avgenergy = run_multiple1(1/betas, shape, n_warmup=0, n_average=100)
-#plt.violinplot(all_states_avgenergy[:,:,1].T, betas, widths=0.02, showextrema=False, showmeans=True);
-#plt.title("Average Energy vs Temperature)")
-#plt.ylabel(r"Average energy per spin ")
-#plt.xlabel(r"Temperature ($k_b T/J$)")
-#plt.savefig('Avg_Energyb.pdf')
+all_states_avgenergy = run_multiple1(1/betas, shape, n_warmup=0, n_average=100)
+plt.violinplot(all_states_avgenergy[:,:,1].T, betas, widths=0.02, showextrema=False, showmeans=True);
+plt.title("Average Energy vs Temperature")
+plt.ylabel(r"Average energy per spin ")
+plt.xlabel(r"Temperature ($k_b T/J$)")
+plt.savefig('Avg_Energy_a.pdf')
+plt.close('all')
 
 all_states_avgmag = run_multiple1(1/betas, shape, n_warmup=10, n_average=100)
 plt.violinplot(all_states_avgmag[:,:,0].T, betas, widths=0.02, showextrema=False, showmeans=True);
-plt.title("Average Magnetisation vs Temperature)")
+plt.title("Average Magnetisation vs Temperature")
 plt.ylabel(r"Average Magnetisation per spin ")
 plt.xlabel(r"Temperature ($k_b T/J$)")
-plt.savefig('Avg_Magnetisationb.pdf')
+plt.savefig('Avg_Magnetisation_a.pdf')
+plt.close('all')
+
+sys_N = [1,50,200,1000]
+
+fig, ax  = plt.subplots(nrows = len(sys_N), sharex=True)
+for n in tqdm(range(len(sys_N))):
+	state_mag = run_multiple1(1/betas, sys_N[n], n_warmup=10, n_average=500)
+	ax[n].violinplot(np.abs(state_mag[:,:,1].T), betas, widths=0.02, showextrema=False, showmeans=True)
+	ax[n].set_title(f'For N = {sys_N[n]}')
+	if n == (len(sys_N)-1):
+		ax[n].set_xlabel('T')
+		ax[n].set_ylabel('Absolute Average Magnetisation|m|')
+fig.tight_layout()
+fig.savefig("diff_N_a.pdf")
+plt.close('all')
