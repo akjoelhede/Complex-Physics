@@ -41,7 +41,7 @@ def ran_neigh(M):
 
 
 
-default_settings = [np.linspace(2,2.5,20), (1000), 0]
+default_settings = [np.linspace(2,2.5,20), (200), 0]
 
 def init(shape):
     return np.random.choice([-1,1], shape)
@@ -92,7 +92,7 @@ def run_multiple1(betas, shape, n_warmup, n_average):
 
 beta = 2.3
 betas = np.linspace(0.1,4, 40)
-shape = 1000
+shape = 200
 
 print(calc_energy4N(state_0))
 plt.imshow(np.expand_dims(state_0, axis=0), aspect = 'auto')
@@ -127,8 +127,8 @@ def absmag(N):
 	return np.abs(state_mag[:,:,0].T)
 
 fig, ax = plt.subplots(1)
-ax.violinplot(absmag(1000), betas, widths=0.02, showextrema=False, showmeans=True)
-ax.set_title(f'For N = {1000}')
+ax.violinplot(absmag(200), betas, widths=0.02, showextrema=False, showmeans=True)
+ax.set_title(f'For N = {200}')
 ax.set_xlabel('T')
 fig.tight_layout()
 fig.savefig("diff_N_b.pdf")
