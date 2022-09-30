@@ -31,33 +31,14 @@ def Soc(L):#, N, T):
 	return lattice[1:N+1, 1:N+1]
 
 a100 = []
-a=np.random.randint(4,size = (200,200))
+a=np.random.randint(4,size = (20,20))
 for i in range(1000):
 	a100.append(a)
 	a = Soc(a)
 
-img = plt.imshow(a100[1])
+print(a100[1].sum(), a100[999].sum())
+
+img = plt.imshow(a100[999])
 plt.colorbar(img)
 plt.show()
 
-# First set up the figure, the axis, and the plot element we want to animate
-fig = plt.figure()
-ax = plt.axes(xlim=(0, 200), ylim=(0, 200))
-
-
-im=plt.imshow(a100[0],interpolation='none')
-plt.colorbar(im)
-
-
-# animation function.  This is called sequentially
-def animate(i):
-	new_data = a100[i]
-	im.set_array(new_data)
-	return [im]
-
-anim = animation.FuncAnimation(fig, animate, frames=1000, interval=20, blit=True)
-
-anim.save('SandPile_animation.mp4', fps=100, extra_args=['-vcodec', 'libx264'])
-
-print('Done!')
-plt.show()
