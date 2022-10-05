@@ -62,15 +62,17 @@ def Soc(L, counts = 0):#, N, T):
 
 
 #a1=np.random.randint(2,size = (25,25))
-a2=np.random.randint(2,size = (50,50))
-#a3=np.random.randint(2,size = (100,100))
+#a2=np.random.randint(2,size = (50,50))
+a3=np.random.randint(2,size = (100,100))
+#a4=np.random.randint(2,size = (200,200))
+
 #@njit
 def sandpile(initial):
 	a100 = []
 	b100 = []
 	a=initial
 	c = 0
-	for i in tqdm(range(200000)):
+	for i in tqdm(range(400000)):
 		a100.append(a)
 		a,c_new = Soc(a,c)
 		if c_new == 0:
@@ -98,27 +100,38 @@ def sandpile(initial):
 #plt.close('All')
 
 #sp_25 = sandpile(a1)
-sp_50 = sandpile(a2)
-#sp_100 = sandpile(a3)
+#sp_50 = sandpile(a2)
+sp_100 = sandpile(a3)
+#sp_200 = sandpile(a4)
 
-plt.hist(sp_50, density = True)
+plt.hist(sp_100, density = True)
 plt.show()
 plt.close('All')
 
 
-y, x = np.histogram(sp_50, bins = np.logspace(start = np.log(1), stop = np.log(np.max(sp_50))),  density = True)
-plt.plot(x[1:150], y, 'o')
+
+#y0, x0 = np.histogram(sp_25, bins = np.logspace(start = np.log(1), stop = np.log(np.max(sp_25))),  density = True)
+#y1, x1 = np.histogram(sp_50, bins = np.logspace(start = np.log(1), stop = np.log(np.max(sp_50))),  density = True)
+y2, x2 = np.histogram(sp_100, bins = np.logspace(start = np.log(1), stop = np.log(np.max(sp_100))),  density = True)
+#y3, x3 = np.histogram(sp_200, bins = np.logspace(start = np.log(1), stop = np.log(np.max(sp_200))),  density = True)
+plt.plot(x3[1:150], y3, 'o')
 plt.xscale('log')
 plt.xlim(0, 10**6)
+plt.close('All')
 
-plt.yscale('log')
-plt.show()
+#fig, axs = plt.subplots(2,2)
+#axs[0,0].plot(x0[1:150],y0)
+#axs[0,1].plot(x1[1:150],y1)
+#axs[1,0].plot(x2[1:150],y2)
+#axs[1,1].plot(x3[1:150],y3)
+#plt.xscale('log')
+#plt.show()
 plt.close('All')
 
 
-t = np.linspace(0,150000,len(sp_50))
-print(len(t), len(sp_50))
-plt.plot(t, sp_50)
+t = np.linspace(0,400000,len(sp_100))
+print(len(t), len(sp_100))
+plt.plot(t, sp_100)
 plt.show()
 
 
