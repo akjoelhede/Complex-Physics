@@ -61,10 +61,10 @@ def Soc(L, counts = 0):#, N, T):
 	return lattice[1:N+1, 1:N+1], counts 
 
 
-#a1=np.random.randint(2,size = (25,25))
-#a2=np.random.randint(2,size = (50,50))
+a1=np.random.randint(2,size = (25,25))
+a2=np.random.randint(2,size = (50,50))
 a3=np.random.randint(2,size = (100,100))
-#a4=np.random.randint(2,size = (200,200))
+a4=np.random.randint(2,size = (200,200))
 
 #@njit
 def sandpile(initial):
@@ -72,7 +72,7 @@ def sandpile(initial):
 	b100 = []
 	a=initial
 	c = 0
-	for i in tqdm(range(400000)):
+	for i in tqdm(range(100000)):
 		a100.append(a)
 		a,c_new = Soc(a,c)
 		if c_new == 0:
@@ -99,10 +99,10 @@ def sandpile(initial):
 #plt.show()
 #plt.close('All')
 
-#sp_25 = sandpile(a1)
-#sp_50 = sandpile(a2)
+sp_25 = sandpile(a1)
+sp_50 = sandpile(a2)
 sp_100 = sandpile(a3)
-#sp_200 = sandpile(a4)
+sp_200 = sandpile(a4)
 
 plt.hist(sp_100, density = True)
 plt.show()
@@ -110,13 +110,20 @@ plt.close('All')
 
 
 
-#y0, x0 = np.histogram(sp_25, bins = np.logspace(start = np.log(1), stop = np.log(np.max(sp_25))),  density = True)
-#y1, x1 = np.histogram(sp_50, bins = np.logspace(start = np.log(1), stop = np.log(np.max(sp_50))),  density = True)
+y0, x0 = np.histogram(sp_25, bins = np.logspace(start = np.log(1), stop = np.log(np.max(sp_25))),  density = True)
+y1, x1 = np.histogram(sp_50, bins = np.logspace(start = np.log(1), stop = np.log(np.max(sp_50))),  density = True)
 y2, x2 = np.histogram(sp_100, bins = np.logspace(start = np.log(1), stop = np.log(np.max(sp_100))),  density = True)
-#y3, x3 = np.histogram(sp_200, bins = np.logspace(start = np.log(1), stop = np.log(np.max(sp_200))),  density = True)
-plt.plot(x3[1:150], y3, 'o')
+y3, x3 = np.histogram(sp_200, bins = np.logspace(start = np.log(1), stop = np.log(np.max(sp_200))),  density = True)
+
+plt.plot(x0[1:50], y0, 'o', label = 'N = 25')
+plt.plot(x1[1:50], y1, 'o', label = 'N = 50')
+plt.plot(x2[1:50], y2, 'o', label = 'N = 100')
+plt.plot(x3[1:50], y3, 'o', label = 'N = 100')
 plt.xscale('log')
+plt.yscale('log')
 plt.xlim(0, 10**6)
+plt.legend()
+plt.show()
 plt.close('All')
 
 #fig, axs = plt.subplots(2,2)
@@ -126,12 +133,13 @@ plt.close('All')
 #axs[1,1].plot(x3[1:150],y3)
 #plt.xscale('log')
 #plt.show()
-plt.close('All')
 
 
-t = np.linspace(0,400000,len(sp_100))
+
+t = np.linspace(0,200000,len(sp_100))
 print(len(t), len(sp_100))
 plt.plot(t, sp_100)
 plt.show()
+plt.close('All')
 
 
