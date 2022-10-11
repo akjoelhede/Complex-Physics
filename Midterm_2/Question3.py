@@ -99,22 +99,25 @@ def sandpile(initial):
 			ydist = yd
 	return b100, maxsave
 
-test_count,  test_dist = sandpile(a4)
+test_count,  test_dist = sandpile(a3)
 
 # %%
 plt.hist(test_dist,bins = 50, density = True, color = 'orange')
 plt.show()
 plt.close('all')
 
-d = np.log(test_dist)/np.log(200)
+d = np.log(test_dist)/np.log(100)
 
 def dimension(L,d):
 	return L**d
 
-plt.plot(test_count, test_dist, 'o')
-plt.xscale('log')
+plt.scatter(test_dist, test_count, s = 3)
+plt.xlabel('Largest linear dimenstion')
+plt.ylabel('Avalanche size')
+plt.title('Question 3')
+#plt.xscale('log')
 plt.show()
 
 # %%
-print(np.log(np.max(test_dist))/np.log(200))
+print(np.log(np.max(test_dist))/np.log(100))
 # %%

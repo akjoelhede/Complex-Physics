@@ -92,7 +92,7 @@ def sandpile(initial):
 	b100 = []
 	a=initial
 	c = 0
-	for i in tqdm(range(1000000)):
+	for i in tqdm(range(4000000)):
 		#a100.append(a)
 		c_new,a = Soc(a,c)
 		if c_new == 0:
@@ -134,7 +134,6 @@ y1, x1 = np.histogram(sp_50, bins = np.logspace(start = np.log(1), stop = np.log
 y2, x2 = np.histogram(sp_100, bins = np.logspace(start = np.log(1), stop = np.log(np.max(sp_100))),  density = True)
 y3, x3 = np.histogram(sp_200, bins = np.logspace(start = np.log(1), stop = np.log(np.max(sp_200))),  density = True)
 
-#todo: ur girlfriend
 #*finds bin centers from above histograms
 x0centers = (x0[:-1] + x0[1:])/2
 x1centers = (x1[:-1] + x1[1:])/2
@@ -177,21 +176,24 @@ plt.legend()
 plt.show()
 plt.close('All')
 
-
+tau = 1.65
+d = 2.0
 x = np.linspace(0,len(x0centers))
 #*Extracting tau and D
-plt.plot(x[1:50],y0*(x0centers**1.65),'o', label = 'N = 25')
-plt.plot(x[1:50],y1*(x1centers**1.65),'o', label = 'N = 50')
-plt.plot(x[1:50],y2*(x2centers**1.65),'o', label = 'N = 100')
-plt.plot(x[1:50],y3*(x3centers**1.65),'o', label = 'N = 200')
+plt.plot(x0centers/25**d,y0*(x0centers**tau),'o', label = 'N = 25')
+plt.plot(x1centers/50**d,y1*(x1centers**tau),'o', label = 'N = 50')
+plt.plot(x2centers/100**d,y2*(x2centers**tau),'o', label = 'N = 100')
+plt.plot(x3centers/200**d,y3*(x3centers**tau),'o', label = 'N = 200')
+plt.hlines(1, 0,0.5, color = 'k', linestyles='dashed')
+plt.vlines(0.5, 0, 1, color = 'k', linestyles= 'dashed')
 #plt.plot(x0centers/(25**2.5), y0*(x0centers**1.2), 'o', label = 'N = 25')
 #plt.plot(x1centers/(50**2.86), y1*(x1centers**1.3), 'o', label = 'N = 50')
 #plt.plot(x2centers/(100**2.86), y2*(x2centers**1.3), 'o', label = 'N = 100')
 #plt.plot(x3centers/(200**2.86), y3*(x3centers**1.3), 'o', label = 'N = 200')
-#plt.xscale('log')
+plt.xscale('log')
 plt.yscale('log')
 plt.title('Powerlaws for diff. system sizes')
-plt.xlabel('x')
+plt.xlabel('log(s/L^D)')
 plt.ylabel('log(P(s)*s^tau)')
 plt.xlim(0, 30)
 plt.legend()
